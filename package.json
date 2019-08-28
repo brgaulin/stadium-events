@@ -1,0 +1,29 @@
+{
+  "name": "stadium-events",
+  "version": "1.0.0",
+  "description": "Massage local stadium ical into more useful alerts",
+  "main": "index.js",
+  "dependencies": {
+    "ical": "^0.6.0",
+    "ics": "^2.16.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brgaulin/stadium-events.git"
+  },
+  "keywords": [
+    "ical",
+    "stadium",
+    "events"
+  ],
+  "author": "Brendan Davis",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/brgaulin/stadium-events/issues"
+  },
+  "homepage": "https://github.com/brgaulin/stadium-events#readme"
+}
