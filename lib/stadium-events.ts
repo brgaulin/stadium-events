@@ -11,12 +11,17 @@ export class StadiumEventsLambdaStack extends cdk.Stack {
     super(scope, id, props);
 
     // Lambda Function
-    const lambdaFn = new NodejsFunction(this, 'main', {
+    const lambdaFn = new NodejsFunction(this, 'dom', {
       runtime: Runtime.NODEJS_20_X ,
       timeout: cdk.Duration.seconds(300),
+      memorySize: 200,
       environment: {
         TZ: 'America/New_York'
-      }
+      },
+      bundling: {
+        externalModules: ['canvas'],
+        nodeModules: ['jsdom'],
+      },
     })
 
     // Run the eventbridge every week
