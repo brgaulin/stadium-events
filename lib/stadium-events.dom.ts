@@ -8,7 +8,6 @@ const client = new S3Client({});
 const stadiumName = 'Gillette';
 const triggerWords = ['Patriots', 'Revolution'];
 
-const url = 'https://www.gillettestadium.com/?plugin=all-in-one-event-calendar&controller=ai1ec_exporter_controller&action=export_events&no_html=true';
 const dayRegex = /(\d+)/
 
 exports.handler = async () => {
@@ -75,7 +74,7 @@ exports.handler = async () => {
         const eventStartDate = new Date(`${year}-${month + 1}-${dayMatches[1]} ${startTimeNode.textContent.trim()}`);
         const eventEndOfDay = new Date(eventStartDate);
         eventEndOfDay.setDate(eventEndOfDay.getDate() + 1);
-        const eventTitle = eventTitleNode.textContent.trim()
+        const eventTitle = cleanDescription(eventTitleNode.textContent.trim())
 
         const startArray: DateArray = [eventStartDate.getFullYear(), eventStartDate.getMonth() + 1, eventStartDate.getDate()];
         const endArray: DateArray = [eventEndOfDay.getFullYear(), eventEndOfDay.getMonth() + 1, eventEndOfDay.getDate()];
@@ -91,7 +90,6 @@ exports.handler = async () => {
           description: `Event: ${eventTitle}\nStart Time: ${eventStartDate.toLocaleString()}`,
           start: startArray,
           end: endArray,
-          alarms: [{ action: 'display', trigger: { hours: 8, before: false } }]
         });
       } catch(err) {
         console.error('Unable to parse event', item, err)
@@ -143,6 +141,11 @@ function getRequest(url: string, options: any) {
       reject(err);
     });
   });
+}
+
+// Remove unicode ms word characters and replace with generic text
+function cleanDescription(description: string) {
+  return description.replace(/[\u2013]/g, '-').replace(/[\u2019]/g, '\'');
 }
 
 // exports.handler(); // Local Testing
