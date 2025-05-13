@@ -16,6 +16,7 @@ An iCal parser that takes in the iCal file from your local stadium / arena, and 
 npm install -g aws-cdk typescript
 npm install
 npm run build
+node lib/stadium-events.dom.js # Local Testing
 ```
 
 # Deployment

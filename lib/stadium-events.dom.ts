@@ -60,8 +60,10 @@ exports.handler = async () => {
         if (!dateNode || !dateNode.textContent) {
           throw new Error('Unable to find date in html')
         }
-        if (!startTimeNode || !startTimeNode.textContent) {
-          throw new Error('Unable to find start time in html')
+        
+        let startTime = "00:00:00";
+        if (startTimeNode && startTimeNode.textContent) {
+          startTime = startTimeNode.textContent.trim();
         }
         if (!eventTitleNode || !eventTitleNode.textContent) {
           throw new Error('Unable to find event title in html')
@@ -71,7 +73,7 @@ exports.handler = async () => {
           throw new Error(`Unable to parse day out of html: ${dateNode.textContent}`)
         }
 
-        const eventStartDate = new Date(`${year}-${month + 1}-${dayMatches[1]} ${startTimeNode.textContent.trim()}`);
+        const eventStartDate = new Date(`${year}-${month + 1}-${dayMatches[1]} ${startTime}`);
         const eventEndOfDay = new Date(eventStartDate);
         eventEndOfDay.setDate(eventEndOfDay.getDate() + 1);
         const eventTitle = cleanDescription(eventTitleNode.textContent.trim())
@@ -85,9 +87,15 @@ exports.handler = async () => {
             triggerFound = word;
           }
         }
+        let description = `Event: ${eventTitle}`
+        if (startTime == "00:00:00") {
+          description += `\nAll Day Event`
+        } else {
+          description += `\nStart Time: ${eventStartDate.toLocaleString()}`
+        }
         events.push({
           title: `Avoid ${stadiumName}${triggerFound ? ` - ${triggerFound}` : ''}`,
-          description: `Event: ${eventTitle}\nStart Time: ${eventStartDate.toLocaleString()}`,
+          description: description,
           start: startArray,
           end: endArray,
         });
@@ -99,8 +107,10 @@ exports.handler = async () => {
 
   console.log(`Found ${events.length} events!`);
   // console.log(events)
+  // return
   const { error, value } = createEvents(events);
   if (error) {
+    console.error("Unable to serialize events", JSON.stringify(error, null, 2))
     throw error;
   }
 
@@ -113,8 +123,8 @@ exports.handler = async () => {
   try {
     const response = await client.send(uploadCommand);
     console.log(response);
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    console.error(JSON.stringify(error, null, 2))
     throw new Error('Unable to upload to S3');
   }
 };
